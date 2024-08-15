@@ -6,11 +6,11 @@ from subsciptions.models import Subscription
 
 class SubscriptionForm(StyleFormMixin, forms.ModelForm):
     """
-        Форма для оформления подписки.
-        fields (list): Список полей формы (пустой, так как все поля заполняются в методе create_subscription).
+    Форма для оформления подписки.
+    fields (list): Список полей формы (пустой, так как все поля заполняются в методе create_subscription).
 
-        Methods:
-            create_subscription(user, blog): Создает подписку и сохраняет в базу данных.
+    Methods:
+        create_subscription(user, blog): Создает подписку и сохраняет в базу данных.
     """
 
     class Meta:
@@ -19,11 +19,11 @@ class SubscriptionForm(StyleFormMixin, forms.ModelForm):
 
     def create_subscription(self, user, blog):
         """
-            Создает и сохраняет подписку в базу данных.
+        Создает и сохраняет подписку в базу данных.
 
-            Args:
-                user (User): Пользователь, оформляющий подписку.
-                blog (Blog): Контент, на который оформляется подписка.
+        Args:
+            user (User): Пользователь, оформляющий подписку.
+            blog (Blog): Контент, на который оформляется подписка.
         """
         subscription = self.save(commit=False)
         subscription.user = user

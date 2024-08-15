@@ -2,7 +2,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import (
+    TemplateView,
+    ListView,
+    CreateView,
+    DetailView,
+    UpdateView,
+    DeleteView,
+)
 
 from blog.forms import BlogForm, CommentForm
 from blog.models import Blog, Comment
@@ -11,8 +18,9 @@ from subsciptions.models import Subscription
 
 # Create your views here.
 
+
 class HomePageView(TemplateView):
-    template_name = 'blog/home.html'
+    template_name = "blog/home.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -25,24 +33,30 @@ class HomePageView(TemplateView):
             dict: A dictionary containing context data for the view.
         """
         context_data = super().get_context_data(**kwargs)
-        context_data['blog'] = Blog.objects.filter(published_on=True).order_by('?')[:3]
+        context_data["blog"] = Blog.objects.filter(published_on=True).order_by("?")[:3]
 
         if self.request.user.is_authenticated:
             user = self.request.user
 
-            subscribed_blog_ids = Subscription.objects.filter(user=user, status=True).values_list('blog__id', flat=True)
+            subscribed_blog_ids = Subscription.objects.filter(
+                user=user, status=True
+            ).values_list("blog__id", flat=True)
 
-            unsubscribed_blogs = Blog.objects.filter(published_on=True).exclude(id__in=subscribed_blog_ids)
-            subscribed_blogs = Blog.objects.filter(id__in=subscribed_blog_ids, published_on=True)
+            unsubscribed_blogs = Blog.objects.filter(published_on=True).exclude(
+                id__in=subscribed_blog_ids
+            )
+            subscribed_blogs = Blog.objects.filter(
+                id__in=subscribed_blog_ids, published_on=True
+            )
 
-            context_data['unsubscribed_blogs'] = unsubscribed_blogs
-            context_data['subscribed_blogs'] = subscribed_blogs
+            context_data["unsubscribed_blogs"] = unsubscribed_blogs
+            context_data["subscribed_blogs"] = subscribed_blogs
 
         return context_data
 
 
 class BlogListView(LoginRequiredMixin, ListView):
-    template_name = 'blog/blog_list.html'
+    template_name = "blog/blog_list.html"
     model = Blog
 
     def get_queryset(self):
@@ -77,16 +91,15 @@ class BlogDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['comments'] = Comment.objects.filter(blog=self.get_object())
+        context_data["comments"] = Comment.objects.filter(blog=self.get_object())
         return context_data
 
     def post(self, request):
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment_content = form.cleaned_data['comment']
+            comment_content = form.cleaned_data["comment"]
             comment = Comment.objects.create(
-                user=self.request.user,
-                comment=comment_content
+                user=self.request.user, comment=comment_content
             )
 
             blog = self.get_object()
@@ -102,20 +115,20 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
 
 class BlogDeleteView(LoginRequiredMixin, DeleteView):
     model = Blog
-    success_url = reverse_lazy('blog:blog_list')
+    success_url = reverse_lazy("blog:blog_list")
 
 
 def toggle_activity(slug):
     """
-        Переключает атрибут 'published_on' объекта Blog.
+    Переключает атрибут 'published_on' объекта Blog.
 
-        Args:
-            request (HttpRequest): Объект HTTP-запроса.
-            slug (str): Слаг объекта Blog.
+    Args:
+        request (HttpRequest): Объект HTTP-запроса.
+        slug (str): Слаг объекта Blog.
 
-        Returns:
-            HttpResponseRedirect: Перенаправляет на страницу деталей объекта Blog.
+    Returns:
+        HttpResponseRedirect: Перенаправляет на страницу деталей объекта Blog.
     """
     record_item = get_object_or_404(Blog, slug=slug)
     record_item.toggle_published()
-    return redirect(reverse('blog:blog_detail', args=[record_item.slug]))
+    return redirect(reverse("blog:blog_detail", args=[record_item.slug]))

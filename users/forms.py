@@ -1,8 +1,14 @@
 import re
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm, \
-    UserChangeForm, UsernameField
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    AuthenticationForm,
+    PasswordResetForm,
+    SetPasswordForm,
+    UserChangeForm,
+    UsernameField,
+)
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -14,7 +20,7 @@ class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs["class"] = "form-control"
 
 
 class CustomUserRegisterForm(StyleFormMixin, UserCreationForm):
@@ -24,29 +30,29 @@ class CustomUserRegisterForm(StyleFormMixin, UserCreationForm):
 
     phone = forms.CharField(
         max_length=12,
-        label='Phone number',
-        help_text='Enter your phone number',
+        label="Phone number",
+        help_text="Enter your phone number",
         required=True,
-        widget=forms.TextInput(attrs={'placeholder': 'Phone number'}),
+        widget=forms.TextInput(attrs={"placeholder": "Phone number"}),
     )
 
     password1 = forms.CharField(
-        label='Password',
-        help_text='Enter your password',
+        label="Password",
+        help_text="Enter your password",
         required=True,
-        widget=forms.PasswordInput(attrs={'placeholder': 'Password'}),
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"}),
     )
 
     password2 = forms.CharField(
-        label='Confirm password',
-        help_text='Enter your password again',
+        label="Confirm password",
+        help_text="Enter your password again",
         required=True,
-        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm password'}),
+        widget=forms.PasswordInput(attrs={"placeholder": "Confirm password"}),
     )
 
     class Meta:
         model = User
-        fields = ('phone', 'password1', 'password2')
+        fields = ("phone", "password1", "password2")
 
     def clean_phone(self):
         """
@@ -57,11 +63,13 @@ class CustomUserRegisterForm(StyleFormMixin, UserCreationForm):
         Returns:
             phone: the cleaned and validated phone number
         """
-        phone = self.cleaned_data.get('phone')
+        phone = self.cleaned_data.get("phone")
         if User.objects.filter(phone=phone).exists():
-            raise forms.ValidationError('Phone number already exists')
-        elif not re.match(r'^\+7\d{10}$', phone):
-            raise forms.ValidationError('Phone number must start with +7 and contain 10 digits')
+            raise forms.ValidationError("Phone number already exists")
+        elif not re.match(r"^\+7\d{10}$", phone):
+            raise forms.ValidationError(
+                "Phone number must start with +7 and contain 10 digits"
+            )
         return phone
 
     def save(self, commit=True):
@@ -72,7 +80,7 @@ class CustomUserRegisterForm(StyleFormMixin, UserCreationForm):
         :return: The user object after saving the data.
         """
         user = super().save(commit=False)
-        user.phone = self.cleaned_data['phone']
+        user.phone = self.cleaned_data["phone"]
         if commit:
             user.save()
         return user
@@ -82,24 +90,25 @@ class CustomAuthenticationForm(StyleFormMixin, AuthenticationForm):
     """
     A custom form for authenticating a user.
     """
+
     username = forms.CharField(
         max_length=12,
-        label='Phone number',
-        help_text='Enter your phone number',
+        label="Phone number",
+        help_text="Enter your phone number",
         required=True,
-        widget=forms.TextInput(attrs={'placeholder': 'Phone number'}),
+        widget=forms.TextInput(attrs={"placeholder": "Phone number"}),
     )
 
     password = forms.CharField(
-        label='Password',
-        help_text='Enter your password',
+        label="Password",
+        help_text="Enter your password",
         required=True,
-        widget=forms.PasswordInput(attrs={'placeholder': 'Password'}),
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"}),
     )
 
     class Meta:
         model = User
-        fields = ('phone', 'password')
+        fields = ("phone", "password")
 
 
 class CustomUserChangeForm(StyleFormMixin, UserChangeForm):
@@ -109,13 +118,13 @@ class CustomUserChangeForm(StyleFormMixin, UserChangeForm):
 
     class Meta:
         model = User
-        fields = ('phone', 'avatar')
-        field_classes = {'username': UsernameField}
+        fields = ("phone", "avatar")
+        field_classes = {"username": UsernameField}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['password'].widget = forms.HiddenInput()
+        self.fields["password"].widget = forms.HiddenInput()
 
 
 class CustomPasswordResetForm(StyleFormMixin, PasswordResetForm):
@@ -125,15 +134,15 @@ class CustomPasswordResetForm(StyleFormMixin, PasswordResetForm):
     )
     phone = forms.CharField(
         max_length=12,
-        label='Phone number',
-        help_text='Enter your phone number',
+        label="Phone number",
+        help_text="Enter your phone number",
         required=True,
-        widget=forms.TextInput(attrs={'placeholder': 'Phone number'}),
+        widget=forms.TextInput(attrs={"placeholder": "Phone number"}),
     )
 
     class Meta:
         model = User
-        fields = ('phone',)
+        fields = ("phone",)
 
     def clean_phone(self):
         """
@@ -144,9 +153,11 @@ class CustomPasswordResetForm(StyleFormMixin, PasswordResetForm):
         Returns:
             phone: the cleaned and validated phone number
         """
-        phone = self.cleaned_data.get('phone')
-        if not re.match(r'^\+7\d{10}$', phone):
-            raise forms.ValidationError('Phone number must start with +7 and contain 10 digits')
+        phone = self.cleaned_data.get("phone")
+        if not re.match(r"^\+7\d{10}$", phone):
+            raise forms.ValidationError(
+                "Phone number must start with +7 and contain 10 digits"
+            )
         return phone
 
     def save(self, request, **kwargs):
@@ -157,9 +168,9 @@ class CustomPasswordResetForm(StyleFormMixin, PasswordResetForm):
         :param kwargs: Additional keyword arguments.
         :return: A tuple containing the token and uid generated.
         """
-        phone = self.cleaned_data['phone']
+        phone = self.cleaned_data["phone"]
         user = User.objects.get(phone=phone)
-        token_generator = kwargs.get('token_generator', default_token_generator)
+        token_generator = kwargs.get("token_generator", default_token_generator)
         token = token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         return token, uid
@@ -167,15 +178,15 @@ class CustomPasswordResetForm(StyleFormMixin, PasswordResetForm):
 
 class CustomResetConfirmForm(StyleFormMixin, SetPasswordForm):
     new_password1 = forms.CharField(
-        label='New password',
-        help_text='Enter your new password',
+        label="New password",
+        help_text="Enter your new password",
         required=True,
-        widget=forms.PasswordInput(attrs={'placeholder': 'New password'}),
+        widget=forms.PasswordInput(attrs={"placeholder": "New password"}),
     )
 
     new_password2 = forms.CharField(
-        label='Confirm new password',
-        help_text='Enter your new password again',
+        label="Confirm new password",
+        help_text="Enter your new password again",
         required=True,
-        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm new password'}),
+        widget=forms.PasswordInput(attrs={"placeholder": "Confirm new password"}),
     )

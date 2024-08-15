@@ -11,7 +11,7 @@ class Command(BaseCommand):
         user = User.objects.create(
             phone="79999999998",
             email="admin@sky.pro",
-            password='artur290195',
+            password="artur290195",
             first_name="Admin",
             last_name="Admin",
             is_staff=True,

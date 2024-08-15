@@ -19,6 +19,7 @@ black = "^24.8.0"
 python-dotenv = "^1.0.1"
 transliterate = "^1.10.2"
 stripe = "^10.8.0"
+coverage = "^7.6.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -3,7 +3,7 @@ from django.db import models
 
 # Create your models here.
 
-NULLABLE = {'null': True, 'blank': True}
+NULLABLE = {"null": True, "blank": True}
 
 
 class UserManager(BaseUserManager):
@@ -20,7 +20,7 @@ class UserManager(BaseUserManager):
             User: The newly created user object.
         """
         if not phone:
-            raise ValueError('The phone must be set')
+            raise ValueError("The phone must be set")
         user = self.model(phone=phone, **extra_fields)
         user.is_active = True
         user.set_password(password)
@@ -37,14 +37,14 @@ class UserManager(BaseUserManager):
         :return: The created superuser
         :raises ValueError: If is_staff or is_superuser is not True
         """
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
         return self.create_user(phone, password, **extra_fields)
 
 
@@ -55,16 +55,18 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    username = models.CharField(max_length=50, **NULLABLE, unique=True, verbose_name='Username')
-    phone = models.CharField(max_length=25, unique=True, verbose_name='Phone number')
-    avatar = models.ImageField(upload_to='users/', **NULLABLE, verbose_name='Avatar')
+    username = models.CharField(
+        max_length=50, **NULLABLE, unique=True, verbose_name="Username"
+    )
+    phone = models.CharField(max_length=25, unique=True, verbose_name="Phone number")
+    avatar = models.ImageField(upload_to="users/", **NULLABLE, verbose_name="Avatar")
 
-    USERNAME_FIELD = 'phone'
+    USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.phone
 
     class Meta:
-        verbose_name = 'User'
-        verbose_name_plural = 'Users'
+        verbose_name = "User"
+        verbose_name_plural = "Users"
