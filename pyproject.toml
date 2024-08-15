@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 django = "^5.1"
 psycopg2 = "^2.9.9"
+redis = "^5.0.8"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -16,6 +17,8 @@ pillow = "^10.4.0"
 django-cors-headers = "^4.4.0"
 black = "^24.8.0"
 python-dotenv = "^1.0.1"
+transliterate = "^1.10.2"
+stripe = "^10.8.0"
 
 [build-system]
 requires = ["poetry-core"]
