@@ -27,7 +27,7 @@ class BlogCheckoutPageView(TemplateView):
         template_name (str): Имя шаблона страницы оформления подписки.
     """
 
-    template_name = " subscriptions/checkout.html"
+    template_name = " subsciptions/checkout.html"
 
     def get_context_data(self, **kwargs):
         """
@@ -74,8 +74,8 @@ class CreateCheckoutSessionView(View):
                 ],
                 mode="payment",
                 success_url=YOUR_DOMAIN
-                + reverse("subscriptions:success", kwargs={"slug": blog.slug}),
-                cancel_url=YOUR_DOMAIN + reverse("subscriptions:cancel"),
+                + reverse("subsciptions:success", kwargs={"slug": blog.slug}),
+                cancel_url=YOUR_DOMAIN + reverse("subsciptions:cancel"),
                 metadata={"blog_slug": blog.slug, "user_id": user.pk},
             )
         except Exception as e:
@@ -92,7 +92,7 @@ class CancelView(TemplateView):
         template_name (str): Имя шаблона страницы отмены подписки.
     """
 
-    template_name = "subscriptions/cancel.html"
+    template_name = "subsciptions/cancel.html"
 
 
 class SuccessView(TemplateView):
@@ -105,7 +105,7 @@ class SuccessView(TemplateView):
         get(request, *args, **kwargs): Обрабатывает GET-запрос, активирует подписку.
     """
 
-    template_name = "subscriptions/success.html"
+    template_name = "subsciptions/success.html"
 
     def get(self, request, *args, **kwargs):
         blog = get_object_or_404(Blog, slug=self.kwargs["slug"])
@@ -119,7 +119,7 @@ class SuccessView(TemplateView):
             payment_status=True,
             payment_date=timezone.now(),
         )
-        return render(request, "subscriptions/success.html")
+        return render(request, "subsciptions/success.html")
 
 
 @csrf_exempt
@@ -218,7 +218,7 @@ class SubscriptionCreateView(CreateView):
     """
 
     model = Subscription
-    template_name = "subscriptions/subscription_form.html"
+    template_name = "subsciptions/subscription_form.html"
     success_url = reverse_lazy("blog:home")
     form_class = SubscriptionForm
 
@@ -253,7 +253,7 @@ class SubscriptionListView(ListView):
 
     model = Subscription
     template_name = (
-        "subscriptions/subscription_list.html"  # Создайте шаблон для списка подписок
+        "subsciptions/subscription_list.html"  # Создайте шаблон для списка подписок
     )
 
     def get_queryset(self):
@@ -301,7 +301,7 @@ class SubscriptionDeleteView(DeleteView):
     """
 
     model = Subscription
-    template_name = "subscriptions/subscription_confirm_delete.html"
+    template_name = "subsciptions/subscription_confirm_delete.html"
     success_url = reverse_lazy("blog:home")
 
     def get_queryset(self):

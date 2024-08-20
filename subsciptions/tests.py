@@ -26,14 +26,14 @@ class SubscriptionViewTest(SetupTestCase):
 
     def test_create_view(self):
         self.client.login(phone="+71234567899", password="testpass123")
-        url = reverse("subscriptions:subscription_create", args=[self.blog.slug])
+        url = reverse("subsciptions:subscription_create", args=[self.blog.slug])
         response = self.client.post(url, {})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("blog:home"))
 
     def test_delete_view(self):
         self.client.login(phone="+71234567899", password="testpass123")
-        url = reverse("subscriptions:subscription_delete", args=[self.sub.blog.slug])
+        url = reverse("subsciptions:subscription_delete", args=[self.sub.blog.slug])
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
 
@@ -57,15 +57,15 @@ class SubscriptionListViewTest(SetupTestCase):
 
     def test_subscription_list_view_authenticated_user(self):
         self.client.login(phone="+71234567899", password="testpass123")
-        response = self.client.get(reverse("subscriptions:subscription_list"))
+        response = self.client.get(reverse("subsciptions:subscription_list"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "subscriptions/subscription_list.html")
+        self.assertTemplateUsed(response, "subsciptions/subscription_list.html")
 
     def test_subscription_list_view_unauthenticated_user(self):
-        response = self.client.get(reverse("subscriptions:subscription_list"))
+        response = self.client.get(reverse("subsciptions:subscription_list"))
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(
-            response, "subscriptions/subscription_list.html", html=True
+            response, "subsciptions/subscription_list.html", html=True
         )
 
 
@@ -74,7 +74,7 @@ class StripeIntentViewTest(SetupTestCase):
         super().setUp()
         self.blog = Blog.objects.create(title="Test Blog", price=10)
         self.url = reverse(
-            "subscriptions:create-payment-intent", kwargs={"pk": self.blog.pk}
+            "subsciptions:create-payment-intent", kwargs={"pk": self.blog.pk}
         )
 
     def test_stripe_intent_view(self):
@@ -94,7 +94,7 @@ class CreateCheckoutSessionViewTest(SetupTestCase):
 
         blog = Blog.objects.create(title="Test Blog", price=10)
         url = reverse(
-            "subscriptions:create-checkout-session", kwargs={"slug": blog.slug}
+            "subsciptions:create-checkout-session", kwargs={"slug": blog.slug}
         )
         response = self.client.post(url)
 
@@ -105,13 +105,13 @@ class SuccessViewTest(SetupTestCase):
     def setUp(self):
         super().setUp()
         self.blog = Blog.objects.create(title="Test Blog", price=10)
-        self.url = reverse("subscriptions:success", kwargs={"slug": self.blog.slug})
+        self.url = reverse("subsciptions:success", kwargs={"slug": self.blog.slug})
 
     def test_success_view(self):
         self.client.login(phone="+71234567899", password="testpass123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "subscriptions/success.html")
+        self.assertTemplateUsed(response, "subsciptions/success.html")
 
         subscription = Subscription.objects.get(user=self.user, blog=self.blog)
         self.assertTrue(subscription.status)

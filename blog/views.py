@@ -94,7 +94,7 @@ class BlogDetailView(LoginRequiredMixin, DetailView):
         context_data["comments"] = Comment.objects.filter(blog=self.get_object())
         return context_data
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         form = CommentForm(request.POST)
         if form.is_valid():
             comment_content = form.cleaned_data["comment"]
