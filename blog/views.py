@@ -131,4 +131,5 @@ def toggle_activity(slug):
     """
     record_item = get_object_or_404(Blog, slug=slug)
     record_item.toggle_published()
-    return redirect(reverse("blog:blog_detail", args=[record_item.slug]))
+    # return HttpResponseRedirect(request.path_info)
+    # return redirect(reverse("blog:blog_detail", args=[record_item.slug]))
